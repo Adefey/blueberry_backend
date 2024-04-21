@@ -1,0 +1,22 @@
+services:
+
+  blueberry:
+    build:
+      context: ./blueberry
+      dockerfile: Dockerfile
+    ports:
+      - 8192:8192
+    env_file:
+      - ./env_config.txt
+    volumes:
+      - ./blueberry:/app
+
+  mariadb:
+    image: mariadb:latest
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    env_file:
+      - ./env_config.txt
+    expose:
+      - 3306
+    command: --max_allowed_packet=268435456
