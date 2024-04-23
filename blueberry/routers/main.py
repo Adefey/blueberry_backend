@@ -84,7 +84,7 @@ def get_all(count: int = 20, offset: int = 0, search_query: str = None):
 
 
 @router.get("/recipe/{id}", response_model=RecipeForUI)
-def get_be_id(id: str):
+def get_by_id(id: str):
     logging.info(f"GET /recipe/{id}")
     try:
         data = mongo.get(id)
@@ -96,7 +96,7 @@ def get_be_id(id: str):
 
 
 @router.post("/recipe", response_model=str)
-def get_be_id(value: RecipeForUI):
+def post_recipe(value: RecipeForUI):
     logging.info(f"POST /recipe")
     try:
         id = mongo.set(value)

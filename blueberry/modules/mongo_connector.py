@@ -48,10 +48,12 @@ class MongoConnector:
         next_id = self.count()
         value.id = next_id
         try:
-            inserted_id = self.collection.insert_one(value.model_dump()).inserted_id
+            dumped_dict = value.model_dump()
+            print(dumped_dict)
+            self.collection.insert_one(dumped_dict)
         except Exception as exc:
             raise MongoError(exc.args) from exc
-        return inserted_id
+        return next_id
 
     def count(self) -> int:
         try:
