@@ -2,3 +2,4 @@ env_config.txt
 mongo
 blueberry/logs
 !blueberry/logs/.gitempty
+.vscode

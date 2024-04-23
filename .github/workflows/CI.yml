@@ -1,0 +1,15 @@
+name: CI
+on: [push]
+jobs:
+  Deploy:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: deploy
+        run: |
+          sudo apt update
+          sudo apt install openssh-client
+          mkdir -p ~/.ssh
+          eval $(ssh-agent -s)
+          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+          ssh-add <(echo "${{ secrets.SSH_PRIVATE_KEY }}")
+          ssh -o StrictHostKeyChecking=no adefe@adefe.xyz 'cd /home/adefe/blueberry_backend; ./strawberry_backup.sh'
