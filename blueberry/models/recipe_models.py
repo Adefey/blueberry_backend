@@ -11,15 +11,13 @@ class RecipeForList(BaseModel):
 class RecipeList(BaseModel):
     recipes: list[RecipeForList]
 
+
 class StepForUI(BaseModel):
-    caption: str = ""
-    description: str = ""
+    caption: str = "Step name"
+    description: str = "Step description"
     image_url: str = "https://adefe.xyz/avatar.png"
+    duration: int = Field(0, ge=0)
 
 
-class RecipeForUI(BaseModel):
-    caption: str = ""
-    description: str = ""
-    image_url: str = "https://adefe.xyz/avatar.png"
-    steps: list[StepForUI] = []
-    id: int = Field(0, ge=0)
+class RecipeForUI(RecipeForList):
+    steps: list[StepForUI] = [StepForUI]

@@ -21,9 +21,7 @@ class MongoError(RuntimeError):
 class MongoConnector:
 
     def __init__(self):
-        CONNECTION_STRING = (
-            f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@mongo:{MONGO_PORT}/{MONGO_DB}?authSource=admin"
-        )
+        CONNECTION_STRING = f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@mongo:{MONGO_PORT}/{MONGO_DB}?authSource=admin"
         client = MongoClient(CONNECTION_STRING)
         self.client_db = client["blueberry"]
         self.collection = self.client_db["recipes"]
@@ -57,7 +55,7 @@ class MongoConnector:
 
     def count(self) -> int:
         try:
-            count =  self.collection.count_documents({})
+            count = self.collection.count_documents({})
         except Exception as exc:
             raise MongoError(exc.args) from exc
         return count
