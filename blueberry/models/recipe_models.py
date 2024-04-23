@@ -8,6 +8,9 @@ class RecipeForList(BaseModel):
     id: int = Field(0, ge=0)
 
 
+class RecipeList(BaseModel):
+    recipes: list[RecipeForList]
+
 class StepForUI(BaseModel):
     caption: str = ""
     description: str = ""

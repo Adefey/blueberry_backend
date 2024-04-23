@@ -4,6 +4,7 @@ from fastapi.openapi.utils import get_openapi
 import logging
 import time
 from models.recipe_models import (
+    RecipeList,
     RecipeForList,
     RecipeForUI,
     StepForUI,
@@ -80,7 +81,7 @@ def get_all(count: int = 20, offset: int = 0, search_query: str = None):
         logging.error(f"Cannot get data: {exc.args}")
         raise HTTPException(500, detail={"error": f"{exc.args}"}) from exc
     logging.info(f"Collected data: {data}")
-    return data
+    return RecipeList(recipes=data)
 
 
 @router.get("/recipe/{id}", response_model=RecipeForUI)
