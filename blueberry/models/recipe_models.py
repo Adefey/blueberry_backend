@@ -20,4 +20,4 @@ class StepForUI(BaseModel):
 
 
 class RecipeForUI(RecipeForList):
-    steps: list[StepForUI] = [StepForUI]
+    steps: list[StepForUI] = [StepForUI()]
