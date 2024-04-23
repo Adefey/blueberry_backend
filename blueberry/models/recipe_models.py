@@ -2,8 +2,8 @@ from pydantic import BaseModel, Field
 
 
 class RecipeForList(BaseModel):
-    caption: str = ""
-    description: str = ""
+    caption: str = "Recipe name"
+    description: str = "Recipe description"
     image_url: str = "https://adefe.xyz/avatar.png"
     id: int = Field(0, ge=0)
 
@@ -20,4 +20,7 @@ class StepForUI(BaseModel):
 
 
 class RecipeForUI(RecipeForList):
-    steps: list[StepForUI] = [StepForUI()]
+    steps: list[StepForUI] = [
+        StepForUI(caption="Step one"),
+        StepForUI(caption="Step two"),
+    ]
