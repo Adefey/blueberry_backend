@@ -11,12 +11,11 @@ services:
     volumes:
       - ./blueberry:/app
 
-  mariadb:
-    image: mariadb:latest
+  mongo:
+    image: mongo:latest
     volumes:
-      - ./mariadb:/var/lib/mysql
+      - ./mongo:/data/db
     env_file:
       - ./env_config.txt
     expose:
-      - 3306
-    command: --max_allowed_packet=268435456
+      - 27017

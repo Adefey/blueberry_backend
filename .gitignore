@@ -1,3 +1,4 @@
 env_config.txt
-blueberry/build/*
-mariadb/*
+mongo
+blueberry/logs
+!blueberry/logs/.gitempty
