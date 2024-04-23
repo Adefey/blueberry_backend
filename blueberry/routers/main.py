@@ -69,7 +69,7 @@ def custom_openapi():
 router.openapi = custom_openapi
 
 
-@router.get("/recipe/all", response_model=list[RecipeForList])
+@router.get("/recipe/all", response_model=RecipeList)
 def get_all(count: int = 20, offset: int = 0, search_query: str = None):
     """
     Get all recipes

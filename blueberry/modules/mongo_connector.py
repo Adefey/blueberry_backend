@@ -38,7 +38,7 @@ class MongoConnector:
     def get_all(self) -> list[RecipeForList]:
         try:
             values = [
-                RecipeForUI.model_validate(value) for value in self.collection.find()
+                RecipeForList.model_validate(value) for value in self.collection.find()
             ]
         except Exception as exc:
             raise MongoError(exc.args) from exc
