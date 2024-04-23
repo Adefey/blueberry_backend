@@ -20,3 +20,4 @@ class RecipeForUI(BaseModel):
     description: str = ""
     image_url: HttpUrl = "https://adefe.xyz/avatar.png"
     steps: list[StepForUI] = []
+    id: int = Field(0, ge=0)

@@ -27,16 +27,12 @@ class MongoConnector:
         client = MongoClient(CONNECTION_STRING)
         self.client_db = client["blueberry"]
         self.collection = self.client_db["recipes"]
-        ###
-        example = RecipeForUI(steps=[StepForUI(), StepForUI()])
-        self.collection.insert_one(example.model_dump())
-        ###
 
     def get(self, id: str) -> RecipeForUI:
         try:
             value = self.collection.find_one({"id": id})
         except Exception as exc:
-            raise TypeError from exc
+            raise MongoError(exc.args) from exc
         return RecipeForUI.model_validate(value)
 
     def get_all(self) -> list[RecipeForList]:
@@ -45,19 +41,21 @@ class MongoConnector:
                 RecipeForUI.model_validate(value) for value in self.collection.find()
             ]
         except Exception as exc:
-            raise TypeError from exc
+            raise MongoError(exc.args) from exc
         return values
 
     def set(self, value: RecipeForUI) -> int:
+        next_id = self.count()
+        value.id = next_id
         try:
             inserted_id = self.collection.insert_one(value.model_dump()).inserted_id
         except Exception as exc:
-            raise TypeError from exc
+            raise MongoError(exc.args) from exc
         return inserted_id
 
     def count(self) -> int:
         try:
             count =  self.collection.count_documents({})
         except Exception as exc:
-            raise TypeError from exc
+            raise MongoError(exc.args) from exc
         return count
