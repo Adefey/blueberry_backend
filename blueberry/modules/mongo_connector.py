@@ -1,9 +1,9 @@
 from pymongo import MongoClient, TEXT
+import re
 
 from models.recipe_models import (
     RecipeForList,
     RecipeForUI,
-    StepForUI,
 )
 
 from modules.config import (
@@ -39,8 +39,9 @@ class MongoConnector:
     ) -> list[RecipeForList]:
         try:
             if search_query:
+                regex = re.fi("", re.IGNORECASE)
                 found_documents = self.collection.find(
-                    {"$text": {"$search": search_query}}
+                    {"caption": {"$regex": f"^{search_query}"}}
                 )
             else:
                 found_documents = self.collection.find()
