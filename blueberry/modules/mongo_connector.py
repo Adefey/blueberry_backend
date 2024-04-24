@@ -33,14 +33,19 @@ class MongoConnector:
             raise MongoError(exc.args) from exc
         return RecipeForUI.model_validate(value)
 
-    def get_all(self, offset: int, limit: int, search_query) -> list[RecipeForList]:
+    def get_all(
+        self, offset: int = None, limit: int = None, search_query: str = None
+    ) -> list[RecipeForList]:
         try:
-            found_documents = (
-                self.collection.find({{"$text": {"$search": search_query}}})
-                .skip(offset)
-                .limit(limit)
-            )
+            found_documents = self.collection.find()
+            # TODO добавить поиск
+            if offset:
+                found_documents = found_documents.skip(offset)
+            if limit:
+                found_documents = found_documents.limit(limit)
+
             values = [RecipeForList.model_validate(value) for value in found_documents]
+            print(values)
         except Exception as exc:
             raise MongoError(exc.args) from exc
         return values
@@ -57,7 +62,7 @@ class MongoConnector:
 
     def count(self) -> int:
         try:
-            count = self.collection.count_documents({})
+            count = self.collection.count_documents(filter={})
         except Exception as exc:
             raise MongoError(exc.args) from exc
         return count
