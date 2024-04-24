@@ -33,11 +33,14 @@ class MongoConnector:
             raise MongoError(exc.args) from exc
         return RecipeForUI.model_validate(value)
 
-    def get_all(self) -> list[RecipeForList]:
+    def get_all(self, offset: int, limit: int, search_query) -> list[RecipeForList]:
         try:
-            values = [
-                RecipeForList.model_validate(value) for value in self.collection.find()
-            ]
+            found_documents = (
+                self.collection.find({{"$text": {"$search": search_query}}})
+                .skip(offset)
+                .limit(limit)
+            )
+            values = [RecipeForList.model_validate(value) for value in found_documents]
         except Exception as exc:
             raise MongoError(exc.args) from exc
         return values
@@ -47,7 +50,6 @@ class MongoConnector:
         value.id = next_id
         try:
             dumped_dict = value.model_dump()
-            print(dumped_dict)
             self.collection.insert_one(dumped_dict)
         except Exception as exc:
             raise MongoError(exc.args) from exc

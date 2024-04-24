@@ -10,6 +10,7 @@ class RecipeForList(BaseModel):
 
 class RecipeList(BaseModel):
     recipes: list[RecipeForList]
+    total: int = Field(0, ge=0)
 
 
 class StepForUI(BaseModel):

@@ -77,11 +77,12 @@ def get_all(count: int = 20, offset: int = 0, search_query: str = None):
     logging.info("GET /recipe/all")
     try:
         data = mongo.get_all()
+        total = mongo.count()
     except MongoError as exc:
         logging.error(f"Cannot get data: {exc.args}")
         raise HTTPException(500, detail={"error": f"{exc.args}"}) from exc
-    logging.info(f"Collected data: {data}")
-    return RecipeList(recipes=data)
+    logging.info(f"Collected data: {data}, count {count}")
+    return RecipeList(recipes=data, total=total)
 
 
 @router.get("/recipe/{id}", response_model=RecipeForUI)
