@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, TEXT
 
 from models.recipe_models import (
     RecipeForList,
@@ -25,6 +25,7 @@ class MongoConnector:
         client = MongoClient(CONNECTION_STRING)
         self.client_db = client["blueberry"]
         self.collection = self.client_db["recipes"]
+        self.collection.create_index([("str", TEXT)])
 
     def get(self, id: str) -> RecipeForUI:
         try:
@@ -37,8 +38,12 @@ class MongoConnector:
         self, offset: int = None, limit: int = None, search_query: str = None
     ) -> list[RecipeForList]:
         try:
-            found_documents = self.collection.find()
-            # TODO добавить поиск
+            if search_query:
+                found_documents = self.collection.find(
+                    {"$text": {"$search": search_query}}
+                )
+            else:
+                found_documents = self.collection.find()
             if offset:
                 found_documents = found_documents.skip(offset)
             if limit:
