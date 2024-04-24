@@ -76,7 +76,7 @@ def get_all(count: int = 20, offset: int = 0, search_query: str = None):
     """
     logging.info("GET /recipe/all")
     try:
-        data = mongo.get_all()
+        data = mongo.get_all(count, offset, search_query)
         total = mongo.count()
     except MongoError as exc:
         logging.error(f"Cannot get data: {exc.args}")
