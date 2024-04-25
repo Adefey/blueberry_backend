@@ -39,7 +39,7 @@ class MongoConnector:
         try:
             if search_query:
                 found_documents = self.collection.find(
-                    {"caption": {"$regex": f"^.*{search_query}.*$/i"}}
+                    {"caption": {"$regex": f"^.*{search_query}.*$", "$options": "i"}}
                 )
             else:
                 found_documents = self.collection.find()
