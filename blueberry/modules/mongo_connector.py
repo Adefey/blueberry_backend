@@ -28,9 +28,12 @@ class MongoConnector:
     def get(self, id: str) -> RecipeForUI:
         try:
             value = self.collection.find_one({"id": id})
+            if value is None:
+                return None
+            result = RecipeForUI.model_validate(value)
         except Exception as exc:
             raise MongoError(exc.args) from exc
-        return RecipeForUI.model_validate(value)
+        return result
 
     def get_all(
         self, offset: int = None, limit: int = None, search_query: str = None
@@ -48,7 +51,6 @@ class MongoConnector:
                 found_documents = found_documents.limit(limit)
 
             values = [RecipeForList.model_validate(value) for value in found_documents]
-            print(values)
         except Exception as exc:
             raise MongoError(exc.args) from exc
         return values
