@@ -9,7 +9,7 @@ class RecipeForList(BaseModel):
 
 
 class RecipeList(BaseModel):
-    recipes: list[RecipeForList]
+    recipes: list[RecipeForList] = []
     total: int = Field(0, ge=0)
 
 

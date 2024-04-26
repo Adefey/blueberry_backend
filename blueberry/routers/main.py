@@ -8,7 +8,7 @@ from models.recipe_models import (
     RecipeForUI,
 )
 from modules.mongo_connector import MongoConnector, MongoError
-
+from typing import Optional
 
 router = FastAPI()
 mongo = MongoConnector()
@@ -83,7 +83,7 @@ def get_all(count: int = 20, offset: int = 0, search_query: str = None):
     return RecipeList(recipes=data, total=total)
 
 
-@router.get("/recipe/{id}", response_model=RecipeForUI)
+@router.get("/recipe/{id}", response_model=Optional[RecipeForUI])
 def get_by_id(id: int):
     """
     Get recipe by ID
