@@ -1,4 +1,4 @@
-from pymongo import MongoClient, TEXT
+from pymongo import MongoClient
 
 from models.recipe_models import (
     RecipeForList,
@@ -24,7 +24,6 @@ class MongoConnector:
         client = MongoClient(CONNECTION_STRING)
         self.client_db = client["blueberry"]
         self.collection = self.client_db["recipes"]
-        self.collection.create_index([("str", TEXT)])
 
     def get(self, id: str) -> RecipeForUI:
         try:

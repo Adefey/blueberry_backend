@@ -5,9 +5,7 @@ import logging
 import time
 from models.recipe_models import (
     RecipeList,
-    RecipeForList,
     RecipeForUI,
-    StepForUI,
 )
 from modules.mongo_connector import MongoConnector, MongoError
 
@@ -87,6 +85,9 @@ def get_all(count: int = 20, offset: int = 0, search_query: str = None):
 
 @router.get("/recipe/{id}", response_model=RecipeForUI)
 def get_by_id(id: int):
+    """
+    Get recipe by ID
+    """
     logging.info(f"GET /recipe/{id}")
     try:
         data = mongo.get(id)
@@ -99,6 +100,9 @@ def get_by_id(id: int):
 
 @router.post("/recipe", response_model=int)
 def post_recipe(value: RecipeForUI):
+    """
+    Upload new recipe in raw JSON format
+    """
     logging.info(f"POST /recipe")
     try:
         id = mongo.set(value)
