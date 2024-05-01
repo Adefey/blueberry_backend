@@ -12,4 +12,4 @@ jobs:
           eval $(ssh-agent -s)
           echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
           ssh-add <(echo "${{ secrets.SSH_PRIVATE_KEY }}")
-          ssh -o StrictHostKeyChecking=no adefe@adefe.xyz 'cd /home/adefe/blueberry_backend; ./update.sh'
+          ssh -o StrictHostKeyChecking=no adefe@adefe.xyz -p 22022 'cd /home/adefe/blueberry_backend; ./update.sh'
