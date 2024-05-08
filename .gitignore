@@ -4,3 +4,4 @@ mariadb
 blueberry/logs
 !blueberry/logs/.gitempty
 .vscode
+*/__pycache__/
