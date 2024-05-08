@@ -1,4 +1,6 @@
 fastapi
 pydantic
 pymongo
+PyMySQL
+fastapi-login
 uvicorn

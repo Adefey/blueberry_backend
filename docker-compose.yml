@@ -8,6 +8,7 @@ services:
       - 8192:8192
     env_file:
       - ./env_config.txt
+    restart: on-failure
     volumes:
       - ./blueberry:/app
 
@@ -17,5 +18,26 @@ services:
       - ./mongo:/data/db
     env_file:
       - ./env_config.txt
+    restart: on-failure
     expose:
       - 27017
+
+  mariadb:
+    image: mariadb:latest
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    restart: on-failure
+    env_file:
+      - ./env_config.txt
+    expose:
+      - 3306
+
+  pma:
+    image: phpmyadmin:latest
+    depends_on:
+      - mariadb
+    restart: on-failure
+    ports:
+      - 3307:3307
+    env_file:
+      - ./env_config.txt

@@ -1,5 +1,6 @@
 env_config.txt
 mongo
+mariadb
 blueberry/logs
 !blueberry/logs/.gitempty
 .vscode
