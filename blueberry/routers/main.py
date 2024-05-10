@@ -42,7 +42,9 @@ logging.basicConfig(
 )
 
 origins = [
-    "*",
+    "https://blueberry.adefe.xyz",
+    "https://api.blueberry.adefe.xyz",
+    "http://localhost:8192",
 ]
 
 router.add_middleware(
