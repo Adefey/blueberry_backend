@@ -23,7 +23,11 @@ from modules.config import (
 
 router = FastAPI()
 login_manager = LoginManager(
-    AUTH_SECRET, "/login", use_cookie=True, cookie_name="blueberry-token"
+    AUTH_SECRET,
+    "/login",
+    use_cookie=True,
+    cookie_name="blueberry-token",
+    default_expiry=3600,
 )
 mongo = MongoConnector()
 mariadb = MariaDB()
@@ -168,6 +172,7 @@ def post_register(data: AuthRequestModel, response: Response):
             )
         token = login_manager.create_access_token(data={"user": data.login})
         login_manager.set_cookie(response, token)
+        response.set_cookie("blueberry-user", data.login)
         logging.info(f"Registered, given cookie: {token}")
         response.status_code = status.HTTP_200_OK
         return response
@@ -186,6 +191,7 @@ def post_login(data: AuthRequestModel, response: Response):
         if mariadb.check_user(data.login, data.password):
             token = login_manager.create_access_token(data={"user": data.login})
             login_manager.set_cookie(response, token)
+            response.set_cookie("blueberry-user", data.login)
             logging.info(f"Login success, given cookie: {token}")
             response.status_code = status.HTTP_200_OK
             return response
