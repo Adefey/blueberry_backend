@@ -3,6 +3,7 @@ from fastapi_login import LoginManager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 import logging
+from datetime import timedelta
 import time
 from models.recipe_models import (
     RecipeList,
@@ -27,7 +28,7 @@ login_manager = LoginManager(
     "/login",
     use_cookie=True,
     cookie_name="blueberry-token",
-    default_expiry=3600,
+    default_expiry=timedelta(days=1),
 )
 mongo = MongoConnector()
 mariadb = MariaDB()
