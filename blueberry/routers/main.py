@@ -12,7 +12,7 @@ from models.auth_models import (
     AuthRequestModel,
 )
 from modules.mongo_connector import MongoConnector, MongoError
-from modules.mariadb_connector import MariaDB, MariaDBError
+from modules.mariadb_connector import MariaDB, MariaDBError, LoginTakenError
 from typing import Optional
 from modules.utils import (
     validate_string,
@@ -155,8 +155,13 @@ def post_register(data: AuthRequestModel, response: Response):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Password must be longer than 3 symbols, letters, digits and most special symbols allowed",
             )
-
-        mariadb.register(data.login, data.password)
+        try:
+            mariadb.register(data.login, data.password)
+        except LoginTakenError as exc:
+            logging.info(f"Cannot register, this user exists")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Login is taken"
+            )
         token = login_manager.create_access_token(data={"user": data.login})
         login_manager.set_cookie(response, token)
         logging.info(f"Registered, given cookie: {token}")
