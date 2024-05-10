@@ -146,14 +146,16 @@ def post_register(data: AuthRequestModel, response: Response):
     logging.info(f"POST /user/register")
     try:
         if not validate_string(data.login):
+            logging.info(f"Login: {data.login} validation error")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Login must be longer than 3 symbols, letters, digits and most special symbols allowed",
+                detail="Login must be longer than 4 symbols, letters, digits and most special symbols allowed",
             )
         if not validate_string(data.password):
+            logging.info(f"Password: {data.password} validation error")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Password must be longer than 3 symbols, letters, digits and most special symbols allowed",
+                detail="Password must be longer than 4 symbols, letters, digits and most special symbols allowed",
             )
         try:
             mariadb.register(data.login, data.password)
