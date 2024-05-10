@@ -69,6 +69,10 @@ class MariaDB:
                 cursor.execute(select_query)
             except Exception as exc:
                 raise MariaDBError(exc.args) from exc
+
+            if cursor.rowcount == 0:
+                return False
+
             saved_password = cursor.fetchone()[0]
 
         return saved_password == password_sha256
