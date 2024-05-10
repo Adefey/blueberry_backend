@@ -173,7 +173,7 @@ def post_register(data: AuthRequestModel, response: Response):
             )
         token = login_manager.create_access_token(data={"user": data.login})
         login_manager.set_cookie(response, token)
-        response.set_cookie("blueberry-user", data.login)
+        response.set_cookie("blueberry-user", data.login, httponly=True)
         logging.info(f"Registered, given cookie: {token}")
         response.status_code = status.HTTP_200_OK
         return response
@@ -192,7 +192,7 @@ def post_login(data: AuthRequestModel, response: Response):
         if mariadb.check_user(data.login, data.password):
             token = login_manager.create_access_token(data={"user": data.login})
             login_manager.set_cookie(response, token)
-            response.set_cookie("blueberry-user", data.login)
+            response.set_cookie("blueberry-user", data.login, httponly=True)
             logging.info(f"Login success, given cookie: {token}")
             response.status_code = status.HTTP_200_OK
             return response
