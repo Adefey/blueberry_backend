@@ -133,7 +133,9 @@ def post_recipe(value: RecipeForUI, user=Depends(login_manager.optional)):
     """
     logging.info(f"POST /recipe")
     if user is None:
+        logging.info("No user detected")
         raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    logging.info(f"Detected user: {user}")
     try:
         id = mongo.set(value)
     except MongoError as exc:
@@ -171,7 +173,7 @@ def post_register(data: AuthRequestModel, response: Response):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Login is taken"
             )
-        token = login_manager.create_access_token(data={"user": data.login})
+        token = login_manager.create_access_token(data={"sub": data.login})
         response.set_cookie(
             "blueberry-token",
             token,
@@ -202,7 +204,7 @@ def post_login(data: AuthRequestModel, response: Response):
     logging.info(f"POST /user/login")
     try:
         if mariadb.check_user(data.login, data.password):
-            token = login_manager.create_access_token(data={"user": data.login})
+            token = login_manager.create_access_token(data={"sub": data.login})
             response.set_cookie(
                 "blueberry-token",
                 token,
