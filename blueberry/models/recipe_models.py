@@ -22,6 +22,14 @@ class StepForUI(BaseModel):
 
 class RecipeForUI(RecipeForList):
     steps: list[StepForUI] = [
-        StepForUI(caption="Step one", description="Description one"),
-        StepForUI(caption="Step two", description="Description two"),
+        StepForUI(
+            caption="Step one",
+            description="Description one",
+            image_url="https://adefe.xyz",
+        ),
+        StepForUI(
+            caption="Step two",
+            description="Description two",
+            image_url="https://adefe.xyz",
+        ),
     ]
