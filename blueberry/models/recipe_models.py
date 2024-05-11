@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, HttpUrl
 class RecipeForList(BaseModel):
     caption: str = Field(min_length=2)
     description: str = Field(min_length=2)
-    image_url: HttpUrl = Field(min_length=7)
+    image_url: HttpUrl = Field("https://adefe.xyz/avatar.png")
     id: int = Field(0, ge=0)
 
 
@@ -16,12 +16,12 @@ class RecipeList(BaseModel):
 class StepForUI(BaseModel):
     caption: str = Field(min_length=2)
     description: str = Field(min_length=2)
-    image_url: HttpUrl = Field(min_length=7)
+    image_url: HttpUrl = Field("https://adefe.xyz/avatar.png")
     duration: int = Field(0, ge=0)
 
 
 class RecipeForUI(RecipeForList):
     steps: list[StepForUI] = [
-        StepForUI(caption="Step one"),
-        StepForUI(caption="Step two"),
+        StepForUI(caption="Step one", description="Description one"),
+        StepForUI(caption="Step two", description="Description two"),
     ]
