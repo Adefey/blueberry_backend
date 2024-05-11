@@ -178,7 +178,6 @@ def post_register(data: AuthRequestModel, response: Response):
             data.login,
             httponly=False,
             expires=timedelta(days=1),
-            secure=False,
         )
         logging.info(f"Registered, given cookie: {token}")
         response.status_code = status.HTTP_200_OK
@@ -203,7 +202,6 @@ def post_login(data: AuthRequestModel, response: Response):
                 data.login,
                 httponly=False,
                 expires=timedelta(days=1),
-                secure=False,
             )
             logging.info(f"Login success, given cookie: {token}")
             response.status_code = status.HTTP_200_OK
