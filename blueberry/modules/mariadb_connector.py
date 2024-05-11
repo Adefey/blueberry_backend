@@ -121,7 +121,7 @@ class MariaDB:
             saved_token = result[0]
             expiery_time = result[1]
 
-            if expiery_time > (
+            if expiery_time < (
                 int(time.time()) + datetime.timedelta(days=1).total_seconds()
             ):
                 update_query = f"update users set token = NULL expires = NULL where login = '{login}'"

@@ -122,8 +122,8 @@ def post_recipe(value: RecipeForUI, request: Request):
     Upload new recipe in raw JSON format (authentification required)
     """
     logging.info(f"POST /recipe")
-    token = request.cookies.get("blueberry-token", None)
 
+    token = request.cookies.get("blueberry-token", None)
     if token is None:
         logging.info("No token")
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="No token specified")
