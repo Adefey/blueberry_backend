@@ -60,7 +60,7 @@ class MariaDB:
             if cursor.rowcount != 0:
                 raise LoginTakenError("Login is taken")
         initial_token = create_token(login)
-        expiery_time = int(time.time()) + datetime.timedelta(days=1).total_seconds()
+        expiery_time = int(time.time() + datetime.timedelta(days=1).total_seconds())
         insert_query = f"insert into users (login, password_sha256, token, expires) values ('{login}', '{password_sha256}', '{initial_token}', '{expiery_time}');"
         with self.connection.cursor() as cursor:
             try:
@@ -92,7 +92,7 @@ class MariaDB:
                 return False
 
         token = create_token(login)
-        expiery_time = int(time.time()) + datetime.timedelta(days=1).total_seconds()
+        expiery_time = int(time.time() + datetime.timedelta(days=1).total_seconds())
         update_query = f"update users set token = '{token}' expires = '{expiery_time}' where login = '{login}'"
 
         with self.connection.cursor() as cursor:
@@ -122,7 +122,7 @@ class MariaDB:
             expiery_time = result[1]
 
             if expiery_time < (
-                int(time.time()) + datetime.timedelta(days=1).total_seconds()
+                int(time.time() + datetime.timedelta(days=1).total_seconds())
             ):
                 update_query = f"update users set token = NULL, expires = NULL where login = '{login}'"
                 with self.connection.cursor() as cursor:
