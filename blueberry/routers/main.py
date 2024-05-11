@@ -1,5 +1,4 @@
-from fastapi import FastAPI, HTTPException, Response, Depends, status
-from fastapi_login import LoginManager
+from fastapi import FastAPI, HTTPException, Response, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 import logging
@@ -18,18 +17,9 @@ from typing import Optional
 from modules.utils import (
     validate_string,
 )
-from modules.config import (
-    AUTH_SECRET,
-)
 
 router = FastAPI()
-login_manager = LoginManager(
-    AUTH_SECRET,
-    "/login",
-    use_cookie=True,
-    cookie_name="blueberry-token",
-    default_expiry=timedelta(days=1),
-)
+
 mongo = MongoConnector()
 mariadb = MariaDB()
 
@@ -127,15 +117,27 @@ def get_by_id(id: int):
 
 
 @router.post("/recipe", response_model=int, tags=["Recipe storage"])
-def post_recipe(value: RecipeForUI, user=Depends(login_manager.optional)):
+def post_recipe(value: RecipeForUI, request: Request):
     """
     Upload new recipe in raw JSON format (authentification required)
     """
     logging.info(f"POST /recipe")
+    token = request.cookies.get("blueberry-token", None)
+
+    if token is None:
+        logging.info("No token")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="No token specified")
+
+    user = request.cookies.get("blueberry-user", None)
     if user is None:
         logging.info("No user detected")
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
-    logging.info(f"Detected user: {user}")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="No user specified")
+
+    if not mariadb.check_token(user, token):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Token is bad")
+
+    logging.info(f"Detected user: {user} has OK token")
+
     try:
         id = mongo.set(value)
     except MongoError as exc:
@@ -167,16 +169,15 @@ def post_register(data: AuthRequestModel, response: Response):
                 detail="Password must be longer than 4 symbols, letters, digits and most special symbols allowed",
             )
         try:
-            mariadb.register(data.login, data.password)
+            register_result_token = mariadb.register(data.login, data.password)
         except LoginTakenError as exc:
             logging.info(f"Cannot register, this user exists")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Login is taken"
             )
-        token = login_manager.create_access_token(data={"sub": data.login})
         response.set_cookie(
             "blueberry-token",
-            token,
+            register_result_token,
             httponly=True,
             expires=timedelta(days=1),
             domain="blueberry.adefe.xyz",
@@ -188,7 +189,7 @@ def post_register(data: AuthRequestModel, response: Response):
             expires=timedelta(days=1),
             domain="blueberry.adefe.xyz",
         )
-        logging.info(f"Registered, given cookie: {token}")
+        logging.info(f"Registered, user: {data.login}")
         response.status_code = status.HTTP_200_OK
         return response
     except MariaDBError as exc:
@@ -203,15 +204,16 @@ def post_login(data: AuthRequestModel, response: Response):
     """
     logging.info(f"POST /user/login")
     try:
-        if mariadb.check_user(data.login, data.password):
-            token = login_manager.create_access_token(data={"sub": data.login})
+        auth_result_token = mariadb.authentificate_user(data.login, data.password)
+        if auth_result_token:
             response.set_cookie(
                 "blueberry-token",
-                token,
+                auth_result_token,
                 httponly=True,
                 expires=timedelta(days=1),
                 domain="blueberry.adefe.xyz",
             )
+
             response.set_cookie(
                 "blueberry-user",
                 data.login,
@@ -219,7 +221,7 @@ def post_login(data: AuthRequestModel, response: Response):
                 expires=timedelta(days=1),
                 domain="blueberry.adefe.xyz",
             )
-            logging.info(f"Login success, given cookie: {token}")
+            logging.info(f"Login success, user: {data.login}")
             response.status_code = status.HTTP_200_OK
             return response
         logging.info(f"Wrong login data")
