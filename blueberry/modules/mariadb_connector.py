@@ -93,7 +93,7 @@ class MariaDB:
 
         token = create_token(login)
         expiery_time = int(time.time() + datetime.timedelta(days=1).total_seconds())
-        update_query = f"update users set token = '{token}' expires = '{expiery_time}' where login = '{login}'"
+        update_query = f"update users set token = '{token}', expires = '{expiery_time}' where login = '{login}'"
 
         with self.connection.cursor() as cursor:
             try:
