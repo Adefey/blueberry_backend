@@ -61,7 +61,7 @@ class MariaDB:
                 raise LoginTakenError("Login is taken")
         initial_token = create_token(login)
         expiery_time = int(time.time()) + datetime.timedelta(days=1).total_seconds()
-        insert_query = f"insert into users (login, password_sha256, expires) values ('{login}', '{password_sha256}', '{initial_token}', '{expiery_time}');"
+        insert_query = f"insert into users (login, password_sha256, token, expires) values ('{login}', '{password_sha256}', '{initial_token}', '{expiery_time}');"
         with self.connection.cursor() as cursor:
             try:
                 cursor.execute(insert_query)
