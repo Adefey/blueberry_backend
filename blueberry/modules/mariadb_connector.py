@@ -124,7 +124,7 @@ class MariaDB:
             if expiery_time < (
                 int(time.time()) + datetime.timedelta(days=1).total_seconds()
             ):
-                update_query = f"update users set token = NULL expires = NULL where login = '{login}'"
+                update_query = f"update users set token = NULL, expires = NULL where login = '{login}'"
                 with self.connection.cursor() as cursor:
                     try:
                         cursor.execute(update_query)
