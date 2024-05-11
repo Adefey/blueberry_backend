@@ -172,12 +172,19 @@ def post_register(data: AuthRequestModel, response: Response):
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Login is taken"
             )
         token = login_manager.create_access_token(data={"user": data.login})
-        login_manager.set_cookie(response, token)  # httponly=True
+        response.set_cookie(
+            "blueberry-token",
+            token,
+            httponly=True,
+            expires=timedelta(days=1),
+            domain="blueberry.adefe.xyz",
+        )
         response.set_cookie(
             "blueberry-user",
             data.login,
             httponly=False,
             expires=timedelta(days=1),
+            domain="blueberry.adefe.xyz",
         )
         logging.info(f"Registered, given cookie: {token}")
         response.status_code = status.HTTP_200_OK
@@ -196,12 +203,19 @@ def post_login(data: AuthRequestModel, response: Response):
     try:
         if mariadb.check_user(data.login, data.password):
             token = login_manager.create_access_token(data={"user": data.login})
-            login_manager.set_cookie(response, token)  # httponly=True
+            response.set_cookie(
+                "blueberry-token",
+                token,
+                httponly=True,
+                expires=timedelta(days=1),
+                domain="blueberry.adefe.xyz",
+            )
             response.set_cookie(
                 "blueberry-user",
                 data.login,
                 httponly=False,
                 expires=timedelta(days=1),
+                domain="blueberry.adefe.xyz",
             )
             logging.info(f"Login success, given cookie: {token}")
             response.status_code = status.HTTP_200_OK
