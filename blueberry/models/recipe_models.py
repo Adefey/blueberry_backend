@@ -1,10 +1,10 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 
 
 class RecipeForList(BaseModel):
     caption: str = "Recipe name"
     description: str = "Recipe description"
-    image_url: str = "https://adefe.xyz/avatar.png"
+    image_url: HttpUrl = "https://adefe.xyz/avatar.png"
     id: int = Field(0, ge=0)
 
 
@@ -16,7 +16,7 @@ class RecipeList(BaseModel):
 class StepForUI(BaseModel):
     caption: str = "Step name"
     description: str = "Step description"
-    image_url: str = "https://adefe.xyz/avatar.png"
+    image_url: HttpUrl = "https://adefe.xyz/avatar.png"
     duration: int = Field(0, ge=0)
 
 
