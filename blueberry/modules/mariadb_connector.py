@@ -1,6 +1,6 @@
 import pymysql
 import hashlib
-from utils import create_token
+from modules.utils import create_token
 
 from modules.config import (
     MYSQL_TCP_PORT,
