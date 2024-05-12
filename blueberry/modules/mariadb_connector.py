@@ -93,6 +93,7 @@ class MariaDB:
                 self.connection.commit()
             except Exception as exc:
                 raise MariaDBError(exc.args) from exc
+        return initial_token
 
     def authentificate_user(self, login: str, password: str) -> str:
         """
@@ -145,17 +146,14 @@ class MariaDB:
             except Exception as exc:
                 raise MariaDBError(exc.args) from exc
 
-            print("DEBUG", cursor.rowcount)
             if cursor.rowcount == 0:
                 return False
 
             user_id = cursor.fetchone()[0]
-            print("DEBUG", user_id)
         # Check token (Select with user id too for additional security)
         select_query = (
             f"select expires from tokens where user_id='{user_id}' and token='{token}';"
         )
-        print("DEBUG", select_query)
         self.connection.ping(reconnect=True)
         with self.connection.cursor() as cursor:
             try:
@@ -163,12 +161,10 @@ class MariaDB:
             except Exception as exc:
                 raise MariaDBError(exc.args) from exc
 
-            print("DEBUG", cursor.rowcount)
             if cursor.rowcount == 0:
                 return False
 
             expiery_time = cursor.fetchone()[0]
-            print("DEBUG", expiery_time)
 
         # Delete token if it is too old
         if expiery_time < int(time.time()):
