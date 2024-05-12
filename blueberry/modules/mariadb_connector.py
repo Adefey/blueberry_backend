@@ -112,8 +112,9 @@ class MariaDB:
             if cursor.rowcount == 0:
                 return False
 
-            user_id = cursor.fetchone()[1]
-            saved_password = cursor.fetchone()[0]
+            fetched = cursor.fetchone()
+            saved_password = fetched[0]
+            user_id = fetched[1]
 
             if saved_password != password_sha256:
                 return False
