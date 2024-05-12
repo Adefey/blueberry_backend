@@ -100,7 +100,6 @@ class MariaDB:
         """
         password_sha256 = hashlib.sha256(password.encode()).hexdigest()
         select_query = f"select id, password_sha256 from users where login='{login}';"
-        print("DEBUG", select_query)
 
         # Check password
         self.connection.ping(reconnect=True)
@@ -110,14 +109,12 @@ class MariaDB:
             except Exception as exc:
                 raise MariaDBError(exc.args) from exc
 
-            print("DEBUG", cursor.rowcount)
             if cursor.rowcount == 0:
                 return False
 
             fetched = cursor.fetchone()
-            saved_password = fetched[0]
-            user_id = fetched[1]
-            print("DEBUG", saved_password, user_id)
+            user_id = fetched[0]
+            saved_password = fetched[1]
 
             if saved_password != password_sha256:
                 return False
@@ -166,22 +163,22 @@ class MariaDB:
             if cursor.rowcount == 0:
                 return False
 
-            result = cursor.fetchone()
-            expiery_time = result[0]
+            expiery_time = cursor.fetchone()[0]
 
-            if expiery_time < (
-                int(time.time() + datetime.timedelta(days=1).total_seconds())
-            ):
-                update_query = (
-                    f"delete from tokens where user_id='{user_id}' and token='{token}'"
-                )
-                with self.connection.cursor() as cursor:
-                    try:
-                        cursor.execute(update_query)
-                        self.connection.commit()
-                    except Exception as exc:
-                        raise MariaDBError(exc.args) from exc
+        # Delete token if it is too old
+        if expiery_time < (
+            int(time.time() + datetime.timedelta(days=1).total_seconds())
+        ):
+            update_query = (
+                f"delete from tokens where user_id='{user_id}' and token='{token}'"
+            )
+            with self.connection.cursor() as cursor:
+                try:
+                    cursor.execute(update_query)
+                    self.connection.commit()
+                except Exception as exc:
+                    raise MariaDBError(exc.args) from exc
 
-                return False
+            return False
 
-            return True
+        return True
