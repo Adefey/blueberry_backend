@@ -152,7 +152,7 @@ class MariaDB:
 
         # Check token (Select with user id too for additional security)
         select_query = (
-            f"select expires from users where user_id='{user_id}' and token='{token}';"
+            f"select expires from tokens where user_id='{user_id}' and token='{token}';"
         )
         with self.connection.cursor() as cursor:
             try:
@@ -169,12 +169,12 @@ class MariaDB:
         if expiery_time < (
             int(time.time() + datetime.timedelta(days=1).total_seconds())
         ):
-            update_query = (
+            delete_query = (
                 f"delete from tokens where user_id='{user_id}' and token='{token}'"
             )
             with self.connection.cursor() as cursor:
                 try:
-                    cursor.execute(update_query)
+                    cursor.execute(delete_query)
                     self.connection.commit()
                 except Exception as exc:
                     raise MariaDBError(exc.args) from exc

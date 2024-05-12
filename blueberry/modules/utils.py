@@ -14,6 +14,6 @@ def validate_string(string: str) -> bool:
 
 
 def create_token(username: str) -> str:
-    buf = f"{AUTH_SECRET}+{username}+{time.time}"
+    buf = f"{AUTH_SECRET}+{username}+{time.time()}"
     result = hashlib.sha256(buf.encode()).hexdigest()
     return result
