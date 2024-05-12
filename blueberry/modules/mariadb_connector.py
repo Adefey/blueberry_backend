@@ -100,6 +100,7 @@ class MariaDB:
         """
         password_sha256 = hashlib.sha256(password.encode()).hexdigest()
         select_query = f"select id, password_sha256 from users where login='{login}';"
+        print("DEBUG", select_query)
 
         # Check password
         self.connection.ping(reconnect=True)
@@ -109,12 +110,14 @@ class MariaDB:
             except Exception as exc:
                 raise MariaDBError(exc.args) from exc
 
+            print("DEBUG", cursor.rowcount)
             if cursor.rowcount == 0:
                 return False
 
             fetched = cursor.fetchone()
             saved_password = fetched[0]
             user_id = fetched[1]
+            print("DEBUG", saved_password, user_id)
 
             if saved_password != password_sha256:
                 return False
