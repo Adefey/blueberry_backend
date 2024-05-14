@@ -1,5 +1,4 @@
 services:
-
   blueberry:
     build:
       context: ./blueberry
@@ -31,6 +30,16 @@ services:
       - ./env_config.txt
     expose:
       - 3306
+
+  mongo-express:
+    image: mongo-express:latest
+    depends_on:
+      - mongo
+    restart: on-failure
+    ports:
+      - 8081:8081
+    env_file:
+      - ./env_config.txt
 
   pma:
     image: phpmyadmin:latest
