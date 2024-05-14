@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Response, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 import time
 from models.recipe_models import (
     RecipeList,
@@ -179,14 +179,16 @@ def post_register(data: AuthRequestModel, response: Response):
             "blueberry-token",
             register_result_token,
             httponly=True,
-            expires=timedelta(days=1),
+            secure=True,
+            expires=datetime.now() + timedelta(days=7),
             domain="blueberry.adefe.xyz",
         )
         response.set_cookie(
             "blueberry-user",
             data.login,
             httponly=False,
-            expires=timedelta(days=1),
+            secure=True,
+            expires=datetime.now() + timedelta(days=7),
             domain="blueberry.adefe.xyz",
         )
         logging.info(f"Registered, user: {data.login}")
@@ -210,7 +212,8 @@ def post_login(data: AuthRequestModel, response: Response):
                 "blueberry-token",
                 auth_result_token,
                 httponly=True,
-                expires=timedelta(days=1),
+                secure=True,
+                expires=datetime.now() + timedelta(days=7),
                 domain="blueberry.adefe.xyz",
             )
 
@@ -218,7 +221,8 @@ def post_login(data: AuthRequestModel, response: Response):
                 "blueberry-user",
                 data.login,
                 httponly=False,
-                expires=timedelta(days=1),
+                secure=True,
+                expires=datetime.now() + timedelta(days=7),
                 domain="blueberry.adefe.xyz",
             )
             logging.info(f"Login success, user: {data.login}")
