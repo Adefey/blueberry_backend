@@ -223,7 +223,7 @@ def post_login(data: AuthRequestModel, response: Response):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
 
-@router.get("/me", response_model=AuthResponseModel, tags=["Authentification"])
+@router.get("/user/me", response_model=AuthResponseModel, tags=["Authentification"])
 def get_me(request: Request):
     logging.info(f"GET /me")
 
