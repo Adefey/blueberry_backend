@@ -214,7 +214,7 @@ def post_login(data: AuthRequestModel, response: Response):
                 httponly=True,
                 secure=True,
                 expires=datetime.now(timezone.utc) + timedelta(days=7),
-                domain="blueberry.adefe.xyz",
+                domain="api-blueberry.adefe.xyz",
             )
 
             response.set_cookie(
@@ -223,7 +223,7 @@ def post_login(data: AuthRequestModel, response: Response):
                 httponly=False,
                 secure=True,
                 expires=datetime.now(timezone.utc) + timedelta(days=7),
-                domain="blueberry.adefe.xyz",
+                domain="api-blueberry.adefe.xyz",
             )
             logging.info(f"Login success, user: {data.login}")
             response.status_code = status.HTTP_200_OK
