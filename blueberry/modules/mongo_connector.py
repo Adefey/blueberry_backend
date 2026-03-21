@@ -35,9 +35,7 @@ class MongoConnector:
             raise MongoError(exc.args) from exc
         return result
 
-    def get_all(
-        self, offset: int = None, limit: int = None, search_query: str = None
-    ) -> list[RecipeForList]:
+    def get_all(self, offset: int = None, limit: int = None, search_query: str = None) -> list[RecipeForList]:
         try:
             if search_query:
                 found_documents = self.collection.find(

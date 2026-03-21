@@ -8,9 +8,7 @@ from models.recipe_models import (
     RecipeList,
     RecipeForUI,
 )
-from models.auth_models import (
-    AuthRequestModel,
-)
+from models.auth_models import AuthRequestModel, AuthResponseModel
 from modules.mongo_connector import MongoConnector, MongoError
 from modules.mariadb_connector import MariaDB, MariaDBError, LoginTakenError
 from typing import Optional
@@ -90,16 +88,12 @@ def get_all(count: int = 10, offset: int = 0, search_query: str = None):
         total = mongo.count()
     except MongoError as exc:
         logging.error(f"Cannot get data: {exc.args}")
-        raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"error": f"{exc.args}"}
-        ) from exc
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"error": f"{exc.args}"}) from exc
     logging.info(f"Collected data: {data}, total: {total}")
     return RecipeList(recipes=data, total=total)
 
 
-@router.get(
-    "/recipe/{id}", response_model=Optional[RecipeForUI], tags=["Recipe storage"]
-)
+@router.get("/recipe/{id}", response_model=Optional[RecipeForUI], tags=["Recipe storage"])
 def get_by_id(id: int):
     """
     Get recipe by ID
@@ -109,9 +103,7 @@ def get_by_id(id: int):
         data = mongo.get(id)
     except MongoError as exc:
         logging.error(f"Cannot get data: {exc.args}")
-        raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"error": f"{exc.args}"}
-        ) from exc
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"error": f"{exc.args}"}) from exc
     logging.info(f"Collected data: {data}")
     return data
 
@@ -142,9 +134,7 @@ def post_recipe(value: RecipeForUI, request: Request):
         id = mongo.set(value)
     except MongoError as exc:
         logging.error(f"Cannot upload data: {exc.args}")
-        raise HTTPException(
-            status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"error": f"{exc.args}"}
-        ) from exc
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail={"error": f"{exc.args}"}) from exc
     logging.info(f"Created, given _id: {id}")
     return id
 
@@ -172,9 +162,7 @@ def post_register(data: AuthRequestModel, response: Response):
             register_result_token = mariadb.register(data.login, data.password)
         except LoginTakenError as exc:
             logging.info(f"Cannot register, this user exists")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Login is taken"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Login is taken")
         response.set_cookie(
             "blueberry-token",
             register_result_token,
@@ -233,3 +221,24 @@ def post_login(data: AuthRequestModel, response: Response):
     except MariaDBError as exc:
         logging.info(f"Cannot login: {exc.args}")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+
+@router.get("/me", response_model=AuthResponseModel, tags=["Authentification"])
+def get_me(request: Request):
+    logging.info(f"GET /me")
+
+    token = request.cookies.get("blueberry-token", None)
+    if token is None:
+        logging.info("No token")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="No token specified")
+
+    user = request.cookies.get("blueberry-user", None)
+    if user is None:
+        logging.info("No user detected")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="No user specified")
+
+    if not mariadb.check_token(user, token):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Token is bad")
+
+    logging.info(f"Detected user: {user} has OK token")
+    return AuthResponseModel(login=user)

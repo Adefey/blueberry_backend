@@ -85,7 +85,10 @@ class MariaDB:
         # Give user a token
         initial_token = create_token(login)
         expiery_time = int(time.time() + datetime.timedelta(days=1).total_seconds())
-        insert_query = f"insert into tokens (user_id, token, expires) values ('{inserted_id}', '{initial_token}', '{expiery_time}');"
+        insert_query = (
+            f"insert into tokens (user_id, token, expires) values ('{inserted_id}', '{initial_token}',"
+            f" '{expiery_time}');"
+        )
         self.connection.ping(reconnect=True)
         with self.connection.cursor() as cursor:
             try:
@@ -123,7 +126,9 @@ class MariaDB:
         # Create token
         token = create_token(login)
         expiery_time = int(time.time() + datetime.timedelta(days=1).total_seconds())
-        update_query = f"insert into tokens (user_id, token, expires) values ('{user_id}', '{token}', '{expiery_time}');"
+        update_query = (
+            f"insert into tokens (user_id, token, expires) values ('{user_id}', '{token}', '{expiery_time}');"
+        )
         self.connection.ping(reconnect=True)
         with self.connection.cursor() as cursor:
             try:
@@ -151,9 +156,7 @@ class MariaDB:
 
             user_id = cursor.fetchone()[0]
         # Check token (Select with user id too for additional security)
-        select_query = (
-            f"select expires from tokens where user_id='{user_id}' and token='{token}';"
-        )
+        select_query = f"select expires from tokens where user_id='{user_id}' and token='{token}';"
         self.connection.ping(reconnect=True)
         with self.connection.cursor() as cursor:
             try:
@@ -168,9 +171,7 @@ class MariaDB:
 
         # Delete token if it is too old
         if expiery_time < int(time.time()):
-            delete_query = (
-                f"delete from tokens where user_id='{user_id}' and token='{token}'"
-            )
+            delete_query = f"delete from tokens where user_id='{user_id}' and token='{token}'"
             self.connection.ping(reconnect=True)
             with self.connection.cursor() as cursor:
                 try:
