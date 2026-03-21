@@ -38,7 +38,7 @@ logging.basicConfig(
 
 origins = [
     "https://blueberry.adefe.xyz",
-    "https://api.blueberry.adefe.xyz",
+    "https://api-blueberry.adefe.xyz",
     "http://localhost:8192",
 ]
 
