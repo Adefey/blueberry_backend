@@ -1,5 +1,5 @@
-fastapi
-pydantic
-pymongo
-PyMySQL
-uvicorn
+fastapi==0.136.1
+pydantic==2.13.4
+pymongo==4.17.0
+PyMySQL==1.2.0
+uvicorn==0.48.0
