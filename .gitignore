@@ -1,7 +1,9 @@
 env_config.txt
 mongo
+mongot
+configdb
 mariadb
-blueberry/logs
+blueberry/logs/*
 !blueberry/logs/.gitempty
 .vscode
 */__pycache__/

@@ -26,7 +26,7 @@ logging.basicConfig(
     handlers=[
         logging.FileHandler(
             f"/app/logs/log_{int(time.time())}.txt",
-            mode="w",
+            mode="a",
             encoding="UTF-8",
         )
     ],
